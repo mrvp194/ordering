@@ -5,7 +5,7 @@ from django.db import models
 from ..users.models import User
 from django import template
 
-register = template.Library()
+
 # Create your models here.
 # class ReviewManager(models.Manager):
 
@@ -30,14 +30,16 @@ class SnackManager(models.Manager):
             errors['price'] = "That's not a valid price"
         return errors
 
-        def avg_rating(snack) :
-            reviews = snack.reviews
-            total = 0
-            for review in reviews :
-                total += review.rating
-            return total/len(reviews)
-
-    
+    def avg_rating(self, snack) :
+        reviews = snack.review_snack.all()
+        total = 0
+        for review in reviews :
+            total += review.rating
+        if len(reviews) == 0 :
+            length = 1
+        else :
+            length = len(reviews)
+        return total/length 
 
     def review_validator(self, data):
         errors = {}
@@ -75,6 +77,7 @@ class Snack(models.Model):
     # picture_url = models.CharField(max_length=255)
     category = models.ForeignKey(Category, related_name='category')
     created_at = models.DateTimeField(auto_now_add=True)
+    avg = 0
     objects = SnackManager()
 
 class Inventory(models.Model):

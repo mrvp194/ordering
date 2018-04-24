@@ -9,12 +9,14 @@ from ..users.models import User, UserManager
 def index(request): 
     if 'review' in request.session :
         request.session.pop('review')
+    snacks = Snack.objects.all()
+    for snack in snacks :
+        snack.avg = Snack.objects.avg_rating(snack)
+
     context = {
         'user' : User.objects.filter(id=request.session['current_user'])[0],
-        'snacks' : Snack.objects.annotate(number_of_ratings=Count('review_snack'))
+        'snacks' : snacks
     }
-    for key in Snack.objects.extra(number_of_ratings=Avg(Count('review_snack'))):
-        print key.number_of_ratings
 
     return render(request, 'snacks/index.html', context)
 
@@ -58,7 +60,6 @@ def review(request, id):
     user = User.objects.filter(id=request.session['current_user'])[0]
     snack = Snack.objects.filter(id=id)[0]
     data = [user.id, snack.id]
-    # print SnackManager()
     errors = Snack.objects.review_validator(data)
     if len(errors):
         for tag, error in errors.iteritems():

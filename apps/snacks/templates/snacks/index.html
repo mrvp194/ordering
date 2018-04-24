@@ -25,7 +25,7 @@
         <p>Category: {{snack.category.name}}</p>
         <p>Brand: {{snack.brand.name}}</p>
         <p>Total Purchased: {{snack.total_purchased_amount}}</p>
-        <p>Average Rating: {{ Snack.objects|avg_rating:snack }}</p>
+        <p>Average Rating: {{ snack.avg }}</p>
         {% endfor %}
         {% endif %}
 
