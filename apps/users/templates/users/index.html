@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+	<head>
+        <title>Users</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+        <link rel='stylesheet' href="{% static 'users/style.css' %}">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	</head>
+	<body>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 col-centered">
+                    <h1>Registration</h1>
+                    <form action="{% url 'users:register' %}" method="POST">
+                        <div class="form-group">
+                            {% csrf_token %}
+                            First Name: <input type="text" name="first_name" class="form-control">
+                            {% if request.session.name %}
+                            <p>{{request.session.name}}</p>
+                            {% endif %}
+                            Last Name: <input type="text" name="last_name" class="form-control">
+                            {% if request.session.name %}
+                            <p>{{request.session.name}}</p>
+                            {% endif %}
+                            Alias: <input type="text" name="alias"class="form-control">
+                            {% if request.session.alias %}
+                            <p>{{request.session.alias}}</p>
+                            {% endif %}
+                            Email: <input type="email" name="email"class="form-control">
+                            {% if request.session.email %}
+                            <p>{{request.session.email}}</p>
+                            {% endif %}
+                            Password: <input type="password" name="password"class="form-control">
+                            {% if request.session.password %}
+                            <p>{{request.session.password}}</p>
+                            {% endif %}
+                            Confirmation: <input type="password" name="confirmation"class="form-control">
+                            <input type="submit" value="Register" class="form-control">
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-4 col-centered">
+                    <h1>Login</h1>
+                    <form action="{% url 'users:login' %}" method="POST">
+                        <div class="form-group">
+                            {% csrf_token %}
+                            Email: <input type="email" name="email" class="form-control">
+                            {% if request.session.lemail %}
+                            <p>{{request.session.lemail}}</p>
+                            {% endif %}
+                            Password: <input type="password" name="password" class="form-control">
+                            {% if request.session.lpassword %}
+                            <p>{{request.session.lpassword}}</p>
+                            {% endif %}
+                            <input type="submit" value="Login" class="form-control">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

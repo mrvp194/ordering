@@ -1,0 +1,8 @@
+/* body {
+    border: 1px solid black;
+} */
+.col-centered {
+    float: none;
+    margin: 0 auto;
+    padding-top: 1%;
+}
