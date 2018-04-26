@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.db import models
 from ..users.models import User
 from django import template
+import json
 
 
 # Create your models here.
@@ -39,7 +40,7 @@ class SnackManager(models.Manager):
             length = 1
         else :
             length = len(reviews)
-        return total/length 
+        return round(float(total)/float(length),1) 
 
     def review_validator(self, data):
         errors = {}
@@ -49,14 +50,14 @@ class SnackManager(models.Manager):
             errors['review'] = 'You already reviewed this snack!'
         return errors
 
-class InventoryManager(models.Manager):
-    def inventory_validator(self, data):
-        errors = {}
-        if data['quantity'] < 1 :
-            errors['quantity'] = "Not a valid quantity"
-        if len(data['snack']) < 1 :
-            errors['snack'] = "That's not a snack"
-        return errors
+# class InventoryManager(models.Manager):
+#     def inventory_validator(self, data):
+#         errors = {}
+#         if data['quantity'] < 1 :
+#             errors['quantity'] = "Not a valid quantity"
+#         if len(data['snack']) < 1 :
+#             errors['snack'] = "That's not a snack"
+#         return errors
 
 
 class Brand(models.Model):
@@ -77,21 +78,26 @@ class Snack(models.Model):
     # picture_url = models.CharField(max_length=255)
     category = models.ForeignKey(Category, related_name='category')
     created_at = models.DateTimeField(auto_now_add=True)
+    quantity = models.IntegerField()
     avg = 0
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, 
+            sort_keys=True, indent=4)
     objects = SnackManager()
 
-class Inventory(models.Model):
-    quantity = models.IntegerField()
-    snack = models.ForeignKey(Snack, related_name='inventory_snack')
-    created_at = models.DateTimeField(auto_now_add=True)
+# class Inventory(models.Model):
+#     quantity = models.IntegerField()
+#     snack = models.ForeignKey(Snack, related_name='inventory_snack')
+#     created_at = models.DateTimeField(auto_now_add=True)
     # ohbjects = InventoryManager()
 
 class Review(models.Model):
     content = models.TextField()
     rating = models.IntegerField()
-    user = models.ForeignKey(User, related_name='user')
+    user = models.ForeignKey(User, related_name='review_user')
     snack = models.ForeignKey(Snack, related_name='review_snack')
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     # objects = ReviewManager()
 
 # @register.simple_tag

@@ -46,11 +46,11 @@
                     <form action="{% url 'users:login' %}" method="POST">
                         <div class="form-group">
                             {% csrf_token %}
-                            Email: <input type="email" name="email" class="form-control">
+                            Email: <input type="email" name="lemail" class="form-control">
                             {% if request.session.lemail %}
                             <p>{{request.session.lemail}}</p>
                             {% endif %}
-                            Password: <input type="password" name="password" class="form-control">
+                            Password: <input type="password" name="lpassword" class="form-control">
                             {% if request.session.lpassword %}
                             <p>{{request.session.lpassword}}</p>
                             {% endif %}

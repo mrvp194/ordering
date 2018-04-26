@@ -1,25 +1,84 @@
-<!DOCTYPE html>
-{% load static %}
+<!DOCTYPE html> {% load static %}
 <html>
-	<head>
-        <title>Users</title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
-        <link rel='stylesheet' href="{% static 'users/style.css' %}">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	</head>
-	<body>
+
+<head>
+    <title>Users</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
+        crossorigin="anonymous">
+    <link rel='stylesheet' href="{% static 'snacks/style.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>
+
+<body>
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <a class="navbar-brand" href="{% url 'snacks:index' %}">Snacks</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarText">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'snacks:new' %}">Add Snack</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'users:show' user.id %}">Account</a>
+                        </li>
+                        {% if user.is_admin %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'snacks:cart' %}">Shopping Cart</a>
+                        </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'users:logout' %}">Logout</a>
+                        </li>
+                    </ul>
+                    <span class="navbar-text">
+                        <form class="form-inline" action="{% url 'snacks:search' %}" method="POST">
+                            {% csrf_token %}
+            
+                            <input class="form-control mr-sm-2" name='search' type="search" placeholder="Search snack.." aria-label="Search">
+                            <button class="btn btn-outline-dark my-2 my-sm-0" type="submit">Search</button>
+            
+                        </form>
+                    </span>
+                </div>
+            </nav>
+            <br>
+
+
+    <div class="container">
+        <h1>edit your review</h1>
+        <br>
         <form action="{% url 'snacks:rupdate' review.id %}" method="POST">
             {% csrf_token %}
-            <textarea name='content' placeholder="{{review.content}}"></textarea>
-            <select name='rating'>
-                <option value="" selected disabled hidden>{{review.rating}}</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-            </select>
-            <input type="submit" value='Edit'>
+
+            <div class="input-group mb-3">
+                <textarea name='content' rows="6" cols="80">{{review.content}}</textarea>
+            </div>
+            <div style='display: inline-block;'>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="inputGroupSelect01">&nbsp;&nbsp;rating&nbsp;</label>
+                    </div>
+                    <div class="row">
+                        <div class="col 12">
+                            <select name='rating' class="custom-select" id="inputGroupSelect01">
+                                <option value="" selected disabled hidden>{{review.rating}}</option>
+                                <option value="5">5</option>
+                                <option value="4">4</option>
+                                <option value="3">3</option>
+                                <option value="2">2</option>
+                                <option value="1">1</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <input class="btn btn-dark" type="submit" value='edit' style='display: inline-block; width: 140px; margin-left: 390px'>
         </form>
-    </body>
+    </div>
+</body>
+
 </html>

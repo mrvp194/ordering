@@ -35,7 +35,7 @@ def register(request) :
             request.session[tag] = error
         return redirect('/')
     else:
-        password = bcrypt.hashpw('test'.encode(), bcrypt.gensalt())
+        password = bcrypt.hashpw(request.POST['password'].encode(), bcrypt.gensalt())
         user = User.objects.create(first_name=request.POST['first_name'], last_name=request.POST['last_name'], alias=request.POST['alias'], email=request.POST['email'], password=password, is_admin=False)
         user.save()
         request.session['current_user'] = User.objects.filter(email=request.POST['email'])[0].id
@@ -66,12 +66,14 @@ def login(request) :
             request.session[tag] = error
         return redirect('/')
     else:
-        request.session['current_user'] =  User.objects.filter(email=request.POST['email'])[0].id
+        request.session['current_user'] =  User.objects.filter(email=request.POST['lemail'])[0].id
         return redirect('/snacks')
 
 def show(request, id):
+    count = len(User.objects.filter(id=id)[0].review_user.all())
     context = {
-        'user' : User.objects.filter(id=id)[0]
+        'user' : User.objects.filter(id=id)[0],
+        'count' : count
     }
     return render(request, 'users/show.html', context)
 
