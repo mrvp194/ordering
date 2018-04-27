@@ -28,9 +28,7 @@ def new(request, id):
     context = {
             'user' : User.objects.filter(id=request.session['current_user'])[0],
             'categories' : Category.objects.all(),
-            'brands' : Brand.objects.all(),
-            'brand_name' : Brand.objects.all().first().name,
-            'category_name' : Category.objects.all().first().name
+            'brands' : Brand.objects.all()
         }
     if id == None :
         context['snack'] = {}
@@ -168,7 +166,7 @@ def add(request, id):
     #     'user' : User.objects.filter(id=request.session['current_user'])[0],
     #     'cart' : request.session['cart']
     # }
-    return redirect('/snacks/cart')
+    return redirect('/snacks/')
 
 # def checkout(request) :
 
@@ -236,6 +234,7 @@ def top(request):
             'name' : snack.name,
             'price' : snack.price,
             'total_purchased_amount' : snack.total_purchased_amount,
+            'picture_url' : snack.picture_url,
             'brand' : snack.brand,
             'category' : snack.category,
             'created_at' : snack.created_at,
@@ -264,6 +263,7 @@ def mostreviewed(request):
             'name' : snack.name,
             'price' : snack.price,
             'total_purchased_amount' : snack.total_purchased_amount,
+            'picture_url' : snack.picture_url,
             'brand' : snack.brand,
             'category' : snack.category,
             'created_at' : snack.created_at,

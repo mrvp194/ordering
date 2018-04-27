@@ -16,13 +16,14 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarText">
                     <ul class="navbar-nav mr-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'snacks:new' %}">Add Snack</a>
-                        </li>
+                        
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'users:show' user.id %}">Account</a>
                         </li>
                         {% if user.is_admin %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'snacks:new' %}">Add Snack</a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'snacks:cart' %}">Shopping Cart</a>
                         </li>
@@ -53,8 +54,8 @@
                     <div class="row">
                         <div class="col" style='margin-left: 17px; margin-top: 20px;'>
                             <div class="card" style="width: 18em">
-                                <img class="card-img-top" src="{{snack.picture_url}}" alt="Card image cap">
-                                <div class="card-body">
+                                    <div class="img-responsive img-thumbnail ratio-4-3" style="height:18em;background:url({{snack.picture_url}}) no-repeat;background-size:contain;background-position:center"></div>
+                                    <div class="card-body">
                                     <h5>
                                         <a href="{% url 'snacks:show' snack.id %}">{{snack.name}}</a>
                                     </h5>
@@ -66,9 +67,7 @@
                             </div>
                         </div>
             
-                        {% if request.session.review %}
-                        <p>{{request.session.review}}</p>
-                        {% endif %}
+
             
             
             
@@ -102,12 +101,20 @@
                                 </div>
                             </div>
             
-                            <input class="btn btn-dark" type="submit" value='Add' style='display: inline-block; width: 140px; margin-left: 400px'>
+                            <input class="btn btn-dark" type="submit" value='Add' style='display: inline-block; width: 140px; margin-left: 320px'>
                         </form>
             
             
             
                     </div>
+                    {% if request.session.review %}
+                    <div style='margin-left: 50px; margin-top: 20px' class="alert alert-warning" role="alert">
+                        
+                        <p>{{request.session.review}}</p>
+                       
+                    </div>
+                
+                     {% endif %}
                     <br>
                     
                         {% for review in reviews %}

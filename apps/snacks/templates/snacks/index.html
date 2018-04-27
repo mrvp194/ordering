@@ -18,20 +18,21 @@
 <body>
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="{% url 'snacks:index' %}">Snacks</a>
+        <a class="navbar-brand" style='color:rgb(187, 49, 49);' href="{% url 'snacks:index' %}">Snacks</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText"
             aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarText">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'snacks:new' %}">Add Snack</a>
-                </li>
+
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'users:show' user.id %}">Account</a>
                 </li>
                 {% if user.is_admin %}
+                <li class="nav-item">
+                        <a class="nav-link" href="{% url 'snacks:new' %}">Add Snack</a>
+                    </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'snacks:cart' %}">Shopping Cart</a>
                 </li>
@@ -65,12 +66,12 @@
 
 
 
-        <div class="card">
-            <h5 class="card-header text-center">
-                <a href="{% url 'snacks:index' %}">All</a>
-                <a href="{% url 'snacks:newlyadded' %}">New</a>
-                <a href="{% url 'snacks:top' %}">Top Rated</a>
-                <a href="{% url 'snacks:mostreviewed' %}">Most Reviewed</a>
+        <div class="card" style="margin:0 auto">
+            <h5 class="card-header text-center"  >
+                <a style="margin-right:10%;margin-left:5%;" href="{% url 'snacks:index' %}">All</a>
+                <a style="margin-right:10%" href="{% url 'snacks:newlyadded' %}">New</a>
+                <a style="margin-right:10%" href="{% url 'snacks:top' %}">Top Rated</a>
+                <a style="margin-right:10%" href="{% url 'snacks:mostreviewed' %}">Most Reviewed</a>
             </h5>
         </div>
         <div class="card-body">
@@ -81,15 +82,10 @@
                     <div class="card" style="width: 18em">
                         <div class="img-responsive img-thumbnail ratio-4-3" style="height:18em;background:url({{snack.picture_url}}) no-repeat;background-size:contain;background-position:center"></div>
                         <div class="card-body">
-                            {% if 'id' in snack %}
                             <h5>
                                 <a href="{% url 'snacks:show' snack.id %}">{{snack.name}}</a>
                             </h5>
-                            {% else %}
-                            <h5>
-                                <p>{{snack.name}}</p>
-                            </h5>
-                            {% endif %}
+
                             <p>Category: {{snack.category.name}}</p>
                             <p>Brand: {{snack.brand.name}}</p>
                             <p>Total Purchased: {{snack.total_purchased_amount}}</p>
@@ -100,7 +96,7 @@
 
                                 {% csrf_token %}
 
-                                <input type="submit" value="Add to Cart">
+                                <input type="submit" style="width:245px;" class="btn btn-success" value="Add to Cart">
                             </form>
                             {% endif %}
                         </div>

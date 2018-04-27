@@ -24,13 +24,14 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarText">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'snacks:new' %}">Add Snack</a>
-                </li>
+
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'users:show' user.id %}">Account</a>
                 </li>
                 {% if user.is_admin %}
+                <li class="nav-item">
+                        <a class="nav-link" style='color:rgb(187, 49, 49);' href="{% url 'snacks:new' %}">Add Snack</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'snacks:cart' %}">Shopping Cart</a>
                     </li>

@@ -22,12 +22,12 @@
                 <div class="collapse navbar-collapse" id="navbarText">
                         <ul class="navbar-nav mr-auto">
                                 <li class="nav-item">
-                                        <a class="nav-link" href="{% url 'snacks:new' %}">Add Snack</a>
-                                </li>
-                                <li class="nav-item">
                                         <a class="nav-link" href="{% url 'users:show' user.id %}">Account</a>
                                 </li>
                                 {% if user.is_admin %}
+                                <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'snacks:new' %}">Add Snack</a>
+                                    </li>
                                 <li class="nav-item">
                                         <a style='color:rgb(187, 49, 49);' class="nav-link" href="{% url 'snacks:cart' %}">Shopping Cart</a>
                                 </li>
@@ -71,8 +71,10 @@
                                                 <p>Brand: {{snack.brand}}</p>
                                                 <form action="{% url 'snacks:quantity' snack.id %}" method="POST">
                                                         {% csrf_token %}
-                                                    <input type="number" name="quantity" value="{{snack.quantity}}">
-                                                    <input type="submit" value="Add Quantity">
+                                                        <div class="row">
+                                                    <input type="number" style="width:60px; margin-left: 15px;" class="form-control"  name="quantity" value="{{snack.quantity}}">
+                                                    <input type="submit" class="btn btn-info" style="width:180px; margin-left: 5px;" value="Add Quantity">
+                                                </div>
                                                 </form><br>
                                                 <form action="{% url 'snacks:destroysnack' snack.id %}" method="POST">
                                                         {% csrf_token %}
@@ -86,9 +88,9 @@
                         
                         <br> {% endfor %}
                         
-                </div>
-                <form action="{% url 'snacks:checkout' %}" action="POST">
-                        <input type="submit" value="Checkout">
+                </div><br>
+                <form class="text-center" action="{% url 'snacks:checkout' %}" action="POST">
+                        <input class='btn btn-dark' type="submit" value="Checkout">
                     </form>
         </div>
 </body>

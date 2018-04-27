@@ -39,7 +39,7 @@
                         <a class="nav-link" href="{% url 'users:admin' %}">Add Admins</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'snacks:inventory' %}">Inventory</a>
+                        <a class="nav-link" style='color:rgb(187, 49, 49);' href="{% url 'snacks:inventory' %}">Inventory</a>
                     </li>
                 {% endif %}
                 <li class="nav-item">
@@ -69,31 +69,29 @@
                 <div class="card"  style="width: 18em">
                     <div class="img-responsive img-thumbnail ratio-4-3" style="height:18em;background:url({{snack.picture_url}}) no-repeat;background-size:contain;background-position:center"></div>
                     <div class="card-body">
-                        {% if 'id' in snack %}
                         <h5>
                             <a href="{% url 'snacks:show' snack.id %}">{{snack.name}}</a>
                         </h5>
-                        {% else %}
-                        <h5>
-                            <p>{{snack.name}}</p>
-                        </h5>
-                        {% endif %}
+                        
                         <p>Category: {{snack.category.name}}</p>
                         <p>Brand: {{snack.brand.name}}</p>
                         <p>Total Purchased: {{snack.total_purchased_amount}}</p>
                         <p>Average Rating: {{ snack.avg }}</p>
                         <form action="{% url 'snacks:quantity' snack.id %}" method="POST">
                                 {% csrf_token %}
-                            <input type="number" name="quantity" value="{{snack.quantity}}">
-                            <input type="submit" value="Update Quantity">
+                            <div class="row">
+                                    <input type="number" style="width:60px; margin-left: 15px;" class="form-control"  name="quantity" value="{{snack.quantity}}">
+                                    <input type="submit" class="btn btn-info" style="width:180px; margin-left: 5px;" value="Update Quantity">
+                                </div>
                         </form>
+                        <br>
                         {% if user.is_admin %}
                 
                         <form action="{% url 'snacks:add' snack.id %}" method="POST">
                       
                             {% csrf_token %}
                         
-                            <input type="submit" value="Add to Cart">
+                            <input type="submit" style="width:245px;" class="btn btn-success" value="Add to Cart">
                         </form>
                         {% endif %}
                     </div>
