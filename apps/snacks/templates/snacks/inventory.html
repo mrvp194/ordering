@@ -60,32 +60,41 @@
     <br>
 
 <div class="container">
-
+    
     <div class="card-body">
         <div class="row">
             {% if snacks.count > 0 %} {% for snack in snacks %}
 
             <div class="col" style='margin-left: 18px; margin-top: 20px;'>
-                <div class="card" style="width: 18em">
-                        <div class="img-responsive img-thumbnail ratio-4-3" style="height:18em;background:url({{snack.picture_url}}) no-repeat;background-size:contain;background-position:center"></div>                    <div class="card-body">
+                <div class="card"  style="width: 18em">
+                    <div class="img-responsive img-thumbnail ratio-4-3" style="height:18em;background:url({{snack.picture_url}}) no-repeat;background-size:contain;background-position:center"></div>
+                    <div class="card-body">
+                        {% if 'id' in snack %}
                         <h5>
-                            {% if 'search' not in snack %}
                             <a href="{% url 'snacks:show' snack.id %}">{{snack.name}}</a>
-                            {% else %}
-                            <p>{{snack.name}}</p>
-                            {% endif %}
                         </h5>
-                        {% if user.is_admin %}
-                        {% if 'search' in snack %}
-                        <a href="{% url 'snacks:new' snack.id %}">Add to Database</a>
                         {% else %}
-                        <form action="{% url 'snacks:add' snack.id %}" method="POST">
-                            {% csrf_token %}
-                    
-                            <input type="submit" value="Add To Cart">
-                        </form>
+                        <h5>
+                            <p>{{snack.name}}</p>
+                        </h5>
                         {% endif %}
-
+                        <p>Category: {{snack.category.name}}</p>
+                        <p>Brand: {{snack.brand.name}}</p>
+                        <p>Total Purchased: {{snack.total_purchased_amount}}</p>
+                        <p>Average Rating: {{ snack.avg }}</p>
+                        <form action="{% url 'snacks:quantity' snack.id %}" method="POST">
+                                {% csrf_token %}
+                            <input type="number" name="quantity" value="{{snack.quantity}}">
+                            <input type="submit" value="Update Quantity">
+                        </form>
+                        {% if user.is_admin %}
+                
+                        <form action="{% url 'snacks:add' snack.id %}" method="POST">
+                      
+                            {% csrf_token %}
+                        
+                            <input type="submit" value="Add to Cart">
+                        </form>
                         {% endif %}
                     </div>
                 </div>

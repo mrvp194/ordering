@@ -84,3 +84,21 @@ def update(request, id):
 def logout(request):
     request.session.clear()
     return render(request, 'users/index.html')
+
+def admin(request):
+
+    users = User.objects.filter(is_admin= False)
+    context = {
+        'users': users,
+        'user' : User.objects.filter(id=request.session['current_user'])[0]
+    }
+
+    return render(request, 'users/admin.html', context)
+
+
+def addadmin(request, id):
+    user= User.objects.filter(id = id)[0]
+    user.is_admin= True
+    user.save()
+
+    return redirect ('admin')

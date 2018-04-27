@@ -27,8 +27,7 @@ class SnackManager(models.Manager):
         else :
             if len(data['category']) < 1 :
                 errors['category'] = "That's not a valid category"
-        if data['price'] <= 0.00 :
-            errors['price'] = "That's not a valid price"
+
         return errors
 
     def avg_rating(self, snack) :
@@ -75,7 +74,7 @@ class Snack(models.Model):
     price = models.FloatField()
     total_purchased_amount = models.IntegerField()
     brand = models.ForeignKey(Brand, related_name='brand')
-    # picture_url = models.CharField(max_length=255)
+    picture_url = models.CharField(max_length=255)
     category = models.ForeignKey(Category, related_name='category')
     created_at = models.DateTimeField(auto_now_add=True)
     quantity = models.IntegerField()

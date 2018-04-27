@@ -26,7 +26,6 @@ class UserManager(models.Manager):
         return errors
     def login_validator(self, data):
         errors = {} 
-        print self.filter(email=data['lemail'])[0].password
         if len(data['lpassword']) < 8 :
             errors['lpassword'] = "Password is too short"          
         if len(data['lemail']) < 0 or re.match(r"[^@]+@[^@]+\.[^@]+", data['lemail']) == None :

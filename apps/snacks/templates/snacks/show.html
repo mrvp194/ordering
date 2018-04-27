@@ -26,6 +26,12 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'snacks:cart' %}">Shopping Cart</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'users:admin' %}">Add Admins</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'snacks:inventory' %}">Inventory</a>
+                        </li>
                         {% endif %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'users:logout' %}">Logout</a>
@@ -47,7 +53,7 @@
                     <div class="row">
                         <div class="col" style='margin-left: 17px; margin-top: 20px;'>
                             <div class="card" style="width: 18em">
-                                <img class="card-img-top" src="http://www.howtobeadad.com/wp-content/uploads/2016/03/vomit-target-chart.jpg" alt="Card image cap">
+                                <img class="card-img-top" src="{{snack.picture_url}}" alt="Card image cap">
                                 <div class="card-body">
                                     <h5>
                                         <a href="{% url 'snacks:show' snack.id %}">{{snack.name}}</a>

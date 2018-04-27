@@ -2,16 +2,18 @@
 from __future__ import unicode_literals
 from django.db.models import Count, Avg
 from django.shortcuts import render, redirect
+from operator import itemgetter
 from models import Review, Snack, SnackManager, Category, Brand
 from ..users.models import User, UserManager
 import requests
 import datetime
+import openfoodfacts
 from django.utils import timezone
 # Create your views here.
 def index(request): 
     if 'review' in request.session :
         request.session.pop('review')
-    snacks = Snack.objects.all()
+    snacks = Snack.objects.all().order_by('name')
     for snack in snacks :
         snack.avg = Snack.objects.avg_rating(snack)
 
@@ -22,14 +24,27 @@ def index(request):
 
     return render(request, 'snacks/index.html', context)
 
-def new(request):
+def new(request, id):
     context = {
-        'user' : User.objects.filter(id=request.session['current_user'])[0],
-        'categories' : Category.objects.all(),
-        'brands' : Brand.objects.all(),
-        'brand_name' : Brand.objects.all().first().name,
-        'category_name' : Category.objects.all().first().name
-    }
+            'user' : User.objects.filter(id=request.session['current_user'])[0],
+            'categories' : Category.objects.all(),
+            'brands' : Brand.objects.all(),
+            'brand_name' : Brand.objects.all().first().name,
+            'category_name' : Category.objects.all().first().name
+        }
+    if id == None :
+        context['snack'] = {}
+        
+    else :
+        search_result = openfoodfacts.products.get_product(id)
+        snack = {}
+        snack['search'] = ''
+        snack['id'] = search_result['product']['code']
+        snack['name'] =  search_result['product']['product_name']
+        if ' brands' in search_result['product'] :
+            snack['brand'] = search_result['product']['brands']
+        snack['picture_url'] =  search_result['product']['image_front_url']
+        context['snack'] = snack
     
 
     return render(request, 'snacks/new.html', context)
@@ -51,7 +66,7 @@ def create(request):
         else :
             category = Category.objects.create(name=request.POST['ncategory'])
             category.save()
-        snack = Snack.objects.create(name=request.POST['name'], price=request.POST['price'], total_purchased_amount=0, brand=brand, category=category, quantity=0)
+        snack = Snack.objects.create(name=request.POST['name'], picture_url=request.POST['picture_url'], price=0, total_purchased_amount=0, brand=brand, category=category, quantity=0)
         snack.save()
 
     return redirect('/snacks/{}'.format(Snack.objects.filter(name=snack.name)[0].id))
@@ -118,18 +133,19 @@ def rupdate(request, id):
     return redirect('/snacks/{}'.format(snack.id))
 
 def cart(request):
+    # request.session.pop('cart')
     if 'cart' not in request.session :
-        request.session['cart'] = []
+        request.session['cart'] = {}
     context = {
         'user' : User.objects.filter(id=request.session['current_user'])[0],
         'cart' : request.session['cart']
     }
-    print request.session['cart']
+    # print request.session['cart']
     return render(request, 'snacks/cart.html', context)
 
 def add(request, id):
     if 'cart' not in request.session :
-        request.session['cart'] = []
+        request.session['cart'] = {}
     snack = Snack.objects.filter(id=id)[0]
     cart = request.session['cart']
     # request.session.pop('cart')
@@ -138,14 +154,16 @@ def add(request, id):
                         'name' : snack.name,
                         'total_purchased_amount' : snack.total_purchased_amount,
                         'brand' : snack.brand.name,
-                        # picture_url = models.CharField(max_length=255)
+                        'picture_url' : snack.picture_url,
                         'category' : snack.category.name,
                         'quantity' : snack.quantity,
                         'avg' : Snack.objects.avg_rating(snack)
                     }
 
-    cart.append(formatted_snack)
+    cart[formatted_snack['id']] = formatted_snack
     request.session['cart'] = cart
+    request.session.modified = True
+    print request.session['cart']
     # context = {
     #     'user' : User.objects.filter(id=request.session['current_user'])[0],
     #     'cart' : request.session['cart']
@@ -164,17 +182,140 @@ def destroy(request, id):
     return redirect('/snacks/{}'.format(snack.id))
 
 def search(request):
-    response = requests.get("https://api.nal.usda.gov/ndb/search/?format=json&q={}&type=f&max=25&offset=0&api_key=37G5qLxPOeIv3xTND6CfskLBeGDyixzp4x6vcZsz".format(request.POST['search']))
-    print response.json()['list']['item']
-    for item in response.json()['list']['item'] :
-        print item['name']
-
-    snacks = Snack.objects.all()
-    for snack in snacks :
+    search_result = openfoodfacts.products.advanced_search({
+                                                            "search_terms":request.POST['search']
+                                                        })
+    # search_result = openfoodfacts.products.search(request.POST['search'], 1, 20, 'unique_scans','united states')
+    # print search_result['products']
+    snacks = []
+    for val in search_result['products']:
+        if 'image_front_url' in val :
+            if not len(val['image_front_url']) == 0:
+                if val['product_name'] == 'Full on flavour - Four cheese & red onion':
+                    print val['image_front_url']
+                snack = {}
+                snack['search'] = ''
+                snack['id'] = val['code']
+                snack['name'] =  val['product_name']
+                if ' brands' in val :
+                    snack['brand'] = val['brands']
+                snack['picture_url'] =  val['image_front_url']
+                snacks.append(snack)
+    our_snacks = Snack.objects.filter(name__contains='{}'.format(request.POST['search']))
+    for snack in our_snacks :
         snack.avg = Snack.objects.avg_rating(snack)
-
+        snacks.append(snack)
     context = {
         'user' : User.objects.filter(id=request.session['current_user'])[0],
         'snacks' : snacks
     }
+    return render(request, 'snacks/search.html', context)
+
+def destroysnack(request, id):
+    if str(id) in request.session['cart'] :
+        del request.session['cart'][str(id)]
+        request.session.modified = True
+    return redirect('/snacks/cart')
+
+def newlyadded(request):
+
+    context = {
+    'snacks': Snack.objects.all().order_by('created_at'),
+    'user' : User.objects.filter(id=request.session['current_user'])[0]
+    }
+
     return render(request, 'snacks/index.html', context)
+
+def top(request):
+
+    snacks = Snack.objects.all()
+    s = []
+    for snack in snacks :
+        formatted_snack = {
+            'id' : snack.id,
+            'name' : snack.name,
+            'price' : snack.price,
+            'total_purchased_amount' : snack.total_purchased_amount,
+            'brand' : snack.brand,
+            'category' : snack.category,
+            'created_at' : snack.created_at,
+            'quantity' : snack.quantity,
+            'avg' : Snack.objects.avg_rating(snack)
+        }
+        s.append(formatted_snack)
+        s = sorted(s, key=itemgetter('avg'))
+        s.reverse()
+
+    context ={
+    'snacks': s,
+    'user' : User.objects.filter(id=request.session['current_user'])[0]
+    }
+
+    return render(request, 'snacks/index.html', context)
+
+
+def mostreviewed(request):
+
+    snacks = Snack.objects.all()
+    s = []
+    for snack in snacks :
+        formatted_snack = {
+            'id' : snack.id,
+            'name' : snack.name,
+            'price' : snack.price,
+            'total_purchased_amount' : snack.total_purchased_amount,
+            'brand' : snack.brand,
+            'category' : snack.category,
+            'created_at' : snack.created_at,
+            'quantity' : snack.quantity,
+            'avg' : Snack.objects.avg_rating(snack),
+            'count' : snack.review_snack.count()
+        }
+        s.append(formatted_snack)
+        s = sorted(s, key=itemgetter('count'))
+        s.reverse()
+
+
+    context ={
+    'snacks': s,
+    'user' : User.objects.filter(id=request.session['current_user'])[0]
+    }
+
+
+    return render(request, 'snacks/index.html', context)
+
+def quantity(request, id):
+    snack = Snack.objects.filter(id=id)[0]
+    if str(id) in request.session['cart'] :
+        request.session['cart'][str(id)]['quantity'] = request.POST['quantity']
+        request.session.modified = True
+        snack.quantity = request.POST['quantity']
+        snack.save()
+        return redirect('/snacks/cart')
+    else :
+        snack.quantity = request.POST['quantity']
+        snack.save()
+
+        return redirect('/snacks/inventory')
+
+
+def checkout(request):
+    cart = request.session['cart']
+    for snack in cart :
+        s = Snack.objects.filter(id=snack)[0]
+        quantity = request.session['cart'][snack]['quantity']
+        s.total_purchased_amount += int(quantity)
+        s.save()
+    request.session['cart'].clear()
+    request.session.modified = True
+    
+    
+    return redirect('/snacks/inventory')
+
+def inventory(request):
+    snacks = Snack.objects.filter(quantity__gt=0)
+    context =  {
+        'snacks' : snacks,
+        'user' : User.objects.filter(id=request.session['current_user'])[0]
+    }
+    return render(request, 'snacks/inventory.html', context)

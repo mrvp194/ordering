@@ -36,9 +36,6 @@
                         <a class="nav-link" href="{% url 'snacks:cart' %}">Shopping Cart</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'users:admin' %}">Add Admins</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" href="{% url 'snacks:inventory' %}">Inventory</a>
                     </li>
                 {% endif %}
@@ -60,37 +57,30 @@
     <br>
 
 <div class="container">
-
+   
     <div class="card-body">
         <div class="row">
-            {% if snacks.count > 0 %} {% for snack in snacks %}
+           {% for user in users %}
 
             <div class="col" style='margin-left: 18px; margin-top: 20px;'>
                 <div class="card" style="width: 18em">
-                        <div class="img-responsive img-thumbnail ratio-4-3" style="height:18em;background:url({{snack.picture_url}}) no-repeat;background-size:contain;background-position:center"></div>                    <div class="card-body">
+                    <div class="card-body">
                         <h5>
-                            {% if 'search' not in snack %}
-                            <a href="{% url 'snacks:show' snack.id %}">{{snack.name}}</a>
-                            {% else %}
-                            <p>{{snack.name}}</p>
-                            {% endif %}
+                            <p>{{user.first_name}} {{user.last_name}}</p> 
                         </h5>
-                        {% if user.is_admin %}
-                        {% if 'search' in snack %}
-                        <a href="{% url 'snacks:new' snack.id %}">Add to Database</a>
-                        {% else %}
-                        <form action="{% url 'snacks:add' snack.id %}" method="POST">
-                            {% csrf_token %}
+                        <p>Email: {{user.email}}</p>
+                        <p>User Name : {{user.alias}}</p>
                     
-                            <input type="submit" value="Add To Cart">
+                        <form action="{% url 'users:addadmin' user.id %}" method="POST">
+                            {% csrf_token %}
+                            
+                            <input type="submit" value="Add Admin">
                         </form>
-                        {% endif %}
-
-                        {% endif %}
+                       
                     </div>
                 </div>
             </div>
-        {% endfor %} {% endif %}
+        {% endfor %}
         </div>
 
 

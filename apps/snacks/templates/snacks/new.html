@@ -34,6 +34,12 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'snacks:cart' %}">Shopping Cart</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'users:admin' %}">Add Admins</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'snacks:inventory' %}">Inventory</a>
+                    </li>
                 {% endif %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'users:logout' %}">Logout</a>
@@ -59,24 +65,19 @@
                 <div class="row">
                     <div class="col">
                         Name:
-                        <input type="text" name="name" class="form-control"> {% if request.session.name %}
+                        {% if 'name' in snack %}
+                        <input type="text" name="name" class="form-control" value="{{snack.name}}">
+                        {% else %}
+                        <input type="text" name="name" class="form-control"> 
+                        {% endif %}
+                        {% if request.session.name %}
                         <p>{{request.session.name}}</p>
                         {% endif %}
                     </div>
-                    <div class="col">
-                        Price:
-
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">$</span>
-                            </div>
-                            <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
-                        </div>
-                    </div>
+                    
+  
                 </div>
-                {% if request.session.price %}
-                <p>{{request.session.price}}</p>
-                {% endif %}
+ 
                 <br><br>
                 <div class="row">
                     <div class="col">
@@ -88,7 +89,7 @@
                             <p>{{request.session.brand}}</p>
                             {% endif %}
                             <select name="brand">
-                                <option value="" selected disabled hidden>{{brand_name}}</option>
+                                <option value="" selected disabled hidden></option>
                                 {% for brand in brands %}
                                 <option value="{{brand.name}}">{{brand.name}}</option>
                                 {% endfor %}
@@ -97,11 +98,15 @@
                     </div>
                     <div class="col">
                         Add a New Brand:
+                        {% if 'brand' in snack %}
+                        <input type="text" name='nbrand' value="{{snack.brand}}">
+                        {% else %}
                         <input type="text" name='nbrand'>
+                        {% endif %}
                     </div>
                     <div class="col"></div>
                 </div>
-
+                
                 <div class="row">
                     <div class="col">
                         <div class="input-group mb-3">
@@ -112,7 +117,7 @@
                             <p>{{request.session.category}}</p>
                             {% endif %}
                             <select name='category'>
-                                <option value="" selected disabled hidden>{{category_name}}</option>
+                                <option value="" selected disabled hidden></option>
                                 {% for category in categories %}
                                 <option value="{{category.name}}">{{category.name}}</option>
                                 {% endfor %}
@@ -126,8 +131,15 @@
                         <br>
 
                     </div>
-                    <div class="col"></div>
-                </div>
+                    <div class="col">
+                            Picture URL:
+                            {% if 'picture_url' in snack %}
+                            <input type="text" name="picture_url" value="{{snack.picture_url}}"
+                            {% else %}
+                            <input type="text" name='picture_url'>
+                            {% endif %}
+                        </div>
+                                    </div>
             </div>
             <input class="btn btn-dark" type="submit" value='create' style='width: 140px;'>
 
